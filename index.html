@@ -1,12 +1,577 @@
 <!DOCTYPE html>
-<html>
-<head><title>Daniela Martinez</title></head>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- EDIT: the text shown on the browser tab -->
+<title>Dani, interior and product design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F7F5F0;
+    --lacquer: #0B1A3A;
+    --acid: #F2E400;
+    --pigment: #E58FB8;
+    --tangerine: #E8762B;
+    --sans: 'Helvetica Neue', Helvetica, 'Inter Tight', Arial, sans-serif;
+    --pad: clamp(18px, 3vw, 44px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper); color: var(--lacquer);
+    font-family: var(--sans); font-size: 16px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: .14;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: left; }
+  :focus-visible { outline: 2px solid var(--tangerine); outline-offset: 4px; }
+
+  /* Placeholder "photographs": soft, moving fields of pigment.
+     They disappear as soon as you add your own images. */
+  .ph { background: var(--c1); }
+  .ph::before {
+    content: ""; position: absolute; inset: -25%;
+    background:
+      radial-gradient(38% 32% at 32% 42%, var(--c2), transparent 70%),
+      radial-gradient(34% 44% at 68% 62%, var(--c3), transparent 70%),
+      radial-gradient(18% 14% at 58% 30%, rgba(255,255,255,.6), transparent 70%),
+      radial-gradient(30% 30% at 20% 85%, var(--c3), transparent 70%);
+    filter: blur(22px);
+    animation: swirl 16s ease-in-out infinite alternate;
+  }
+  .ph::after {
+    content: ""; position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  @keyframes swirl { to { transform: rotate(28deg) scale(1.18) translate(5%, -4%); } }
+  .fill { position: absolute; inset: 0; overflow: hidden; background-size: cover; background-position: center; }
+
+  /* Navigation */
+  .nav {
+    position: fixed; inset: 0 0 auto; z-index: 30;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 18px var(--pad); color: #fff; mix-blend-mode: difference; font-size: 15px;
+  }
+  .nav .mark { font-weight: 500; text-decoration: none; letter-spacing: -.01em; }
+  .nav ul { display: flex; gap: 22px; list-style: none; }
+  .nav ul a { text-decoration: none; }
+  .nav ul a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Hero */
+  .hero {
+    position: relative; height: 100vh; height: 100svh; min-height: 600px;
+    background: var(--lacquer); color: var(--paper); overflow: hidden;
+  }
+  .hero .frame {
+    position: absolute; right: 6vw; top: 11vh; width: min(52vw, 760px); height: 78vh; overflow: hidden;
+  }
+  .hero .frame .fill { transform: scale(1.18); transition: transform 3.5s cubic-bezier(.2,.8,.2,1); }
+  .loaded .hero .frame .fill { transform: scale(1); }
+  .hero h1 {
+    position: absolute; z-index: 3; left: var(--pad); bottom: 12vh;
+    font-weight: 500; color: var(--acid);
+    font-size: clamp(84px, 18vw, 320px); line-height: .84; letter-spacing: -.05em;
+  }
+  .hero h1 .line { display: block; overflow: hidden; padding: 0 .1em .04em 0; }
+  .hero h1 .line span { display: block; transform: translateY(105%); transition: transform 1.3s cubic-bezier(.2,.8,.2,1); }
+  .hero h1 .line:nth-child(2) span { transition-delay: .15s; }
+  .loaded .hero h1 .line span { transform: none; }
+  .hero .lede {
+    position: absolute; z-index: 3; left: var(--pad); bottom: 4vh; max-width: 34ch; font-size: 15px;
+    opacity: 0; transition: opacity 1s ease 1.2s;
+  }
+  .loaded .hero .lede { opacity: .85; }
+
+  /* Work: an editorial collage that drifts as you scroll */
+  .work { position: relative; padding: 18vh var(--pad) 22vh; clip-path: inset(0); }
+  .bigword-wrap { position: sticky; top: 50vh; height: 0; z-index: 0; pointer-events: none; }
+  .bigword {
+    transform: translateY(-50%); text-align: center;
+    font-weight: 500; font-size: clamp(64px, 15.5vw, 280px);
+    line-height: .84; letter-spacing: -.065em;
+  }
+  .bigword span { display: block; }
+  .collage {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 2vw; row-gap: 16vh;
+  }
+  .tile { display: block; width: 100%; }
+  .tile .frame { position: relative; overflow: hidden; aspect-ratio: var(--ar, 4 / 5); }
+  .tile .fill { transition: transform 1.4s cubic-bezier(.2,.8,.2,1); }
+  .tile:hover .fill, .tile:focus-visible .fill { transform: scale(1.06); }
+  .cap { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0 4px; font-size: 14px; background: var(--paper); }
+  .cap b { font-weight: 500; }
+  .cap span { opacity: .65; }
+  .tile:nth-child(6n+1) { grid-column: 1 / 5;  --ar: 4 / 5; }
+  .tile:nth-child(6n+2) { grid-column: 8 / 12; --ar: 3 / 4; margin-top: 26vh; }
+  .tile:nth-child(6n+3) { grid-column: 4 / 8;  --ar: 1 / 1; }
+  .tile:nth-child(6n+4) { grid-column: 9 / 13; --ar: 4 / 5; margin-top: 12vh; }
+  .tile:nth-child(6n+5) { grid-column: 2 / 7;  --ar: 4 / 3; }
+  .tile:nth-child(6n+6) { grid-column: 8 / 11; --ar: 3 / 4; margin-top: 22vh; }
+
+  /* Index of projects */
+  .index { padding: 14vh var(--pad); border-top: 1px solid var(--lacquer); }
+  .index-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6vh; }
+  .index-head h2 { font-weight: 500; font-size: clamp(48px, 8vw, 140px); line-height: .85; letter-spacing: -.065em; }
+  .index-cols, .index-row { display: grid; grid-template-columns: 2.2fr 1.4fr 2fr 4rem; gap: 20px; }
+  .index-cols { font-size: 13px; opacity: .55; padding-bottom: 10px; border-bottom: 1px solid var(--lacquer); }
+  .index-list { list-style: none; }
+  .index-row {
+    width: 100%; align-items: baseline; padding: 14px 0; border-bottom: 1px solid rgba(11,26,58,.25);
+    font-size: clamp(16px, 1.5vw, 21px); transition: opacity .3s;
+  }
+  .index-row .t { font-weight: 500; letter-spacing: -.02em; }
+  .index-row .y { text-align: right; font-variant-numeric: tabular-nums; }
+  .index-list:hover .index-row { opacity: .3; }
+  .index-list .index-row:hover, .index-list .index-row:focus-visible { opacity: 1; }
+  .index-row .t { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  .index-row:hover .t, .index-row:focus-visible .t { transform: translateX(14px); }
+
+  /* Custom cursor */
+  .cursor { position: fixed; left: 0; top: 0; z-index: 200; pointer-events: none; display: none; }
+  .has-cursor .cursor { display: block; }
+  .has-cursor, .has-cursor * { cursor: none !important; }
+  .cursor-body {
+    position: absolute; width: 14px; height: 14px; transform: translate(-50%, -50%);
+    border-radius: 50%; background: #fff; mix-blend-mode: difference; overflow: hidden;
+    display: grid; place-items: center;
+    transition: width .45s cubic-bezier(.2,.8,.2,1), height .45s cubic-bezier(.2,.8,.2,1), border-radius .45s, background .3s;
+  }
+  .cursor-body .fill { opacity: 0; transition: opacity .3s; }
+  .cursor-label { position: relative; z-index: 2; font-size: 14px; font-weight: 500; color: var(--lacquer); opacity: 0; transition: opacity .2s; }
+  .cursor.link .cursor-body { width: 44px; height: 44px; }
+  .cursor.view .cursor-body { width: 96px; height: 96px; background: var(--acid); mix-blend-mode: normal; }
+  .cursor.view .cursor-label { opacity: 1; }
+  .cursor.img .cursor-body { width: 220px; height: 280px; border-radius: 2px; mix-blend-mode: normal; background: transparent; }
+  .cursor.img .cursor-body .fill { opacity: 1; }
+  .cursor.down .cursor-body { width: 10px; height: 10px; }
+
+  /* Featured: an open art book */
+  .featured { background: var(--tangerine); padding: 16vh var(--pad); display: grid; justify-items: center; gap: 40px; }
+  .book { position: relative; display: flex; width: min(1100px, 100%); aspect-ratio: 2 / 1.32; perspective: 2200px; }
+  .page {
+    position: relative; flex: 1; background: var(--paper);
+    transition: transform 1.6s cubic-bezier(.2,.8,.2,1);
+  }
+  .page.l { transform-origin: right center; transform: rotateY(82deg); box-shadow: -3px 3px 0 #ECE8DF, -6px 6px 0 #DED9CE, -8px 10px 30px rgba(0,0,0,.25); }
+  .page.r { transform-origin: left center;  transform: rotateY(-82deg); box-shadow: 3px 3px 0 #ECE8DF, 6px 6px 0 #DED9CE, 8px 10px 30px rgba(0,0,0,.25); }
+  .book.open .page { transform: none; }
+  .page::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .page.l::after { background: linear-gradient(to left, rgba(0,0,0,.26), rgba(0,0,0,.05) 7%, transparent 14%); }
+  .page.r::after { background: linear-gradient(to right, rgba(0,0,0,.26), rgba(0,0,0,.05) 7%, transparent 14%); }
+  .pic { position: absolute; top: 6%; bottom: 8%; overflow: hidden; }
+  .page.l .pic { left: 6%; right: 0; }
+  .page.r .pic { left: 0; right: 6%; }
+  .span-fill { position: absolute; top: 0; bottom: 0; width: 200%; overflow: hidden; background-size: cover; background-position: center; }
+  .page.l .span-fill { left: 0; }
+  .page.r .span-fill { left: -100%; }
+  .featured-cap { width: min(1100px, 100%); display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  .featured-cap h2 { font-weight: 500; font-size: clamp(40px, 6vw, 96px); line-height: .9; letter-spacing: -.055em; }
+  .featured-cap p { max-width: 40ch; }
+  .pill { display: inline-block; margin-top: 16px; padding: 11px 22px; border: 1px solid currentColor; border-radius: 999px; }
+  .pill:hover { background: var(--lacquer); color: var(--paper); border-color: var(--lacquer); }
+
+  /* Project pop-up: the book opens */
+  .popup {
+    position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+    padding: var(--pad); background: rgba(11,26,58,.82);
+    visibility: hidden; opacity: 0; transition: opacity .4s ease, visibility 0s linear .4s;
+  }
+  .popup.show { visibility: visible; opacity: 1; transition: opacity .4s ease; }
+  .popup .book { width: min(1200px, 100%); max-height: 88vh; }
+  .popup .page.l .pic { right: 6%; }
+  .popup .text { position: absolute; inset: 9% 9% 8% 7%; display: flex; flex-direction: column; overflow: auto; }
+  .popup h3 { font-weight: 500; font-size: clamp(34px, 4.4vw, 70px); line-height: .92; letter-spacing: -.05em; margin-bottom: 20px; }
+  .popup .desc { max-width: 40ch; margin-bottom: 24px; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 20px; font-size: 14px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--lacquer); }
+  .facts dt { opacity: .6; }
+  .close { position: absolute; top: 18px; right: var(--pad); z-index: 2; color: var(--paper); font-size: 15px; text-decoration: underline; text-underline-offset: 4px; }
+
+  /* About */
+  .about { padding: 18vh var(--pad); display: grid; grid-template-columns: 2fr 1fr; gap: 6vw; align-items: end; }
+  .about .statement { font-weight: 500; font-size: clamp(28px, 3.6vw, 58px); line-height: 1.08; letter-spacing: -.04em; max-width: 24ch; }
+  .about dl { display: grid; gap: 28px; font-size: 15px; }
+  .about dt { opacity: .6; margin-bottom: 4px; }
+
+  /* Contact */
+  .contact { background: var(--lacquer); color: var(--paper); padding: 18vh var(--pad) 12vh; }
+  .contact p { margin-bottom: 18px; }
+  .contact .email {
+    font-weight: 500; color: var(--acid); text-decoration: none;
+    font-size: clamp(38px, 8.5vw, 150px); line-height: .95; letter-spacing: -.06em; word-break: break-word;
+    transition: color .4s;
+  }
+  .contact .email:hover { color: var(--pigment); }
+  footer {
+    display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    padding: 22px var(--pad); background: var(--lacquer); color: var(--paper); font-size: 14px;
+    border-top: 1px solid rgba(247,245,240,.2);
+  }
+  footer ul { display: flex; gap: 22px; list-style: none; }
+
+  /* Mobile */
+  @media (max-width: 760px) {
+    .hero .frame { left: var(--pad); right: var(--pad); width: auto; top: 12vh; height: 56vh; }
+    .collage { grid-template-columns: 1fr; row-gap: 10vh; }
+    .tile:nth-child(n) { grid-column: auto; margin-top: 0; width: 82%; }
+    .tile:nth-child(even) { justify-self: end; }
+    .about { grid-template-columns: 1fr; }
+    .index-cols { display: none; }
+    .index-row { grid-template-columns: 1fr auto; gap: 2px 12px; }
+    .index-row .ty { grid-row: 2; opacity: .6; font-size: 14px; }
+    .index-row .m { display: none; }
+    .popup .book { flex-direction: column; aspect-ratio: auto; height: 86svh; }
+    .popup .page.l { transform-origin: center bottom; transform: rotateX(-82deg); }
+    .popup .page.r { transform-origin: center top; transform: rotateX(82deg); }
+    .popup .book.open .page { transform: none; }
+    .popup .page.l .pic { left: 6%; right: 6%; bottom: 0; }
+    .popup .page::after { background: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
 <body>
-  <h1>Hi, I'm Daniela</h1>
-  <p>I'm learning to code and building my first projects.</p>
-  <h2>Projects</h2>
-  <p>Coming soon!</p>
-  <h2>Contact</h2>
-  <p>Email:Daniimartinezb@icloud.com</p>
+
+<nav class="nav">
+  <!-- EDIT: your name or initials -->
+  <a class="mark" href="#top">Dani</a>
+  <ul>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#index">Index</a></li>
+    <li><a href="#about">Profile</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main id="top">
+  <header class="hero">
+    <div class="frame"><div class="fill" id="hero-fill"></div></div>
+    <!-- EDIT: your name (two lines) and one sentence about you -->
+    <h1><span class="line"><span>Dani</span></span><span class="line"><span>Studio</span></span></h1>
+    <p class="lede">Interior and product design. Spaces and objects built from raw material, colour and light.</p>
+  </header>
+
+  <section class="work" id="work">
+    <div class="bigword-wrap" aria-hidden="true">
+      <!-- EDIT: the giant words behind your images -->
+      <p class="bigword"><span>Interiors</span><span>&amp; objects</span></p>
+    </div>
+    <h2 style="position:absolute;left:-9999px">Selected work</h2>
+    <div class="collage" id="collage"></div>
+  </section>
+
+  <section class="index" id="index">
+    <div class="index-head">
+      <h2>Index</h2>
+      <p id="index-count"></p>
+    </div>
+    <div class="index-cols" aria-hidden="true"><span>Project</span><span>Type</span><span>Materials</span><span style="text-align:right">Year</span></div>
+    <ul class="index-list" id="index-list"></ul>
+  </section>
+
+  <section class="featured" id="featured">
+    <div class="book" id="feature-book">
+      <div class="page l"><div class="pic"><div class="span-fill" id="feat-l"></div></div></div>
+      <div class="page r"><div class="pic"><div class="span-fill" id="feat-r"></div></div></div>
+    </div>
+    <div class="featured-cap">
+      <h2 id="feat-title"></h2>
+      <div>
+        <p id="feat-desc"></p>
+        <button class="pill" id="feat-open">Open project</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <!-- EDIT: a few sentences about you -->
+    <p class="statement">I design interiors and objects that sit between architecture, craft and the natural world, using raw pigment, honest materials and a little strangeness.</p>
+    <dl>
+      <div><dt>Disciplines</dt><dd>Interior design, product design, pop-up and retail spaces, set and installation</dd></div>
+      <div><dt>Tools</dt><dd>SketchUp, Rhino, KeyShot, hand sketching and model making</dd></div>
+    </dl>
+  </section>
+
+  <section class="contact" id="contact">
+    <p>Have a space or an object in mind?</p>
+    <!-- EDIT: your email address (change it in BOTH places on the next line) -->
+    <a class="email" href="mailto:youremail@example.com">youremail@example.com</a>
+  </section>
+</main>
+
+<footer>
+  <!-- EDIT: your name and your links -->
+  <span>© 2026 Dani</span>
+  <ul>
+    <li><a href="https://github.com/daniicmb">GitHub</a></li>
+    <li><a href="https://instagram.com/">Instagram</a></li>
+  </ul>
+</footer>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor-body"><div class="fill" id="cursor-fill"></div><span class="cursor-label">View</span></div>
+</div>
+
+<div class="popup" id="popup" role="dialog" aria-modal="true" aria-labelledby="pop-title">
+  <button class="close" id="pop-close">Close</button>
+  <div class="book" id="pop-book">
+    <div class="page l"><div class="pic"><div class="fill" id="pop-art"></div></div></div>
+    <div class="page r">
+      <div class="text">
+        <h3 id="pop-title"></h3>
+        <p class="desc" id="pop-desc"></p>
+        <dl class="facts" id="pop-facts"></dl>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     EDIT YOUR IMAGES AND PROJECTS HERE
+     - To use your own photo: upload it to your repo
+       (Add file > Upload files), then type its file name
+       between the quotes, for example: image: "sofa.jpg"
+     - Leave image: "" empty to show a moving colour placeholder.
+     - featured: true puts that project in the open-book section.
+     - The first 6 projects appear in the collage. Every project
+       appears in the index, so you can add as many as you like.
+     - Keep the commas between projects.
+     ============================================================ */
+  const heroImage = "";                 // your best photo, e.g. "hero.jpg"
+  const heroColors = ["#14254F", "#E58FB8", "#F2E400"];
+
+  const projects = [
+    {
+      title: "Casa Ocre",
+      type: "Residential interior",
+      year: "2025",
+      image: "",
+      colors: ["#8A5A2B", "#E8B04A", "#F3E6CF"],
+      description: "A small apartment reorganised around one arched opening, with lime plaster walls, oak joinery and a kitchen that disappears behind raw linen.",
+      materials: "Lime plaster, oak, linen"
+    },
+    {
+      title: "Rush chair",
+      type: "Product",
+      year: "2025",
+      image: "",
+      colors: ["#2F3B1E", "#C9B26A", "#E58FB8"],
+      description: "A low lounge chair with a seat hand-woven from river rush over a bent ash frame.",
+      materials: "Ash, woven rush"
+    },
+    {
+      title: "Moss room",
+      type: "Pop-up installation",
+      year: "2024",
+      image: "",
+      featured: true,
+      colors: ["#1E3A1A", "#6E8B3D", "#F2E400"],
+      description: "A temporary shop where every surface was covered in preserved moss, with glazed ceramic plinths rising out of the floor like stones.",
+      materials: "Preserved moss, glazed ceramic, steel"
+    },
+    {
+      title: "Seed lamp",
+      type: "Lighting",
+      year: "2024",
+      image: "",
+      colors: ["#0B1A3A", "#E8762B", "#F7D8A8"],
+      description: "A table lamp shaped like a split seed pod, with a hand-blown glass diffuser that glows amber when lit.",
+      materials: "Blown glass, raw brass"
+    },
+    {
+      title: "Studio Marea",
+      type: "Retail interior",
+      year: "2023",
+      image: "",
+      colors: ["#C4532A", "#E58FB8", "#F7F5F0"],
+      description: "A ceramics shop with stepped display shelving that doubles as seating, finished in pigmented clay plaster.",
+      materials: "Clay plaster, terracotta tile, ash"
+    },
+    {
+      title: "Pigment stool",
+      type: "Product",
+      year: "2023",
+      image: "",
+      colors: ["#5B2A4A", "#F2E400", "#E58FB8"],
+      description: "A cast stool where raw pigment is folded into the material by hand, so no two pieces share the same pattern.",
+      materials: "Jesmonite, raw pigment"
+    },
+    {
+      title: "Linen screen",
+      type: "Product",
+      year: "2022",
+      image: "",
+      colors: ["#D8CBB0", "#8A5A2B", "#F7F5F0"],
+      description: "A folding room divider of hand-dyed linen panels stretched over thin oak frames.",
+      materials: "Oak, plant-dyed linen"
+    },
+    {
+      title: "Clay bath",
+      type: "Interior",
+      year: "2022",
+      image: "",
+      colors: ["#A0522D", "#E8B04A", "#2F3B1E"],
+      description: "A bathroom shaped entirely in tinted clay plaster, with a sunken tub and a single round window.",
+      materials: "Tadelakt, clay plaster, brass"
+    }
+  ];
+  /* ============ You don't need to edit below this line ============ */
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function paint(el, image, colors) {
+    if (image) {
+      el.classList.remove('ph');
+      el.style.backgroundImage = 'url("' + image + '")';
+    } else {
+      el.classList.add('ph');
+      el.style.setProperty('--c1', colors[0]);
+      el.style.setProperty('--c2', colors[1]);
+      el.style.setProperty('--c3', colors[2]);
+    }
+  }
+
+  paint(document.getElementById('hero-fill'), heroImage, heroColors);
+  addEventListener('load', () => document.body.classList.add('loaded'));
+
+  /* ---------- Collage ---------- */
+  const collage = document.getElementById('collage');
+  const speeds = [.12, -.08, .2, -.04, .16, -.1];
+  projects.slice(0, 6).forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'tile';
+    b.dataset.cursor = 'view';
+    b.innerHTML = '<div class="lift"><div class="frame"><div class="fill"></div></div><div class="cap"><b></b><span></span></div></div>';
+    paint(b.querySelector('.fill'), p.image, p.colors);
+    b.querySelector('b').textContent = p.title;
+    b.querySelector('.cap span').textContent = p.type + ', ' + p.year;
+    b.querySelector('.lift').dataset.speed = speeds[i % speeds.length];
+    b.addEventListener('click', () => openProject(i, b));
+    collage.appendChild(b);
+  });
+
+  const lifts = [...document.querySelectorAll('.lift')];
+  let ticking = false;
+  function parallax() {
+    if (innerWidth > 760) {
+      for (const el of lifts) {
+        const r = el.parentElement.getBoundingClientRect();
+        const off = r.top + r.height / 2 - innerHeight / 2;
+        el.style.transform = 'translateY(' + (off * -el.dataset.speed) + 'px)';
+      }
+    } else lifts.forEach(el => el.style.transform = '');
+    ticking = false;
+  }
+  if (!reduceMotion) {
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(parallax); } }, { passive: true });
+    parallax();
+  }
+
+  /* ---------- Index ---------- */
+  const ilist = document.getElementById('index-list');
+  document.getElementById('index-count').textContent = projects.length + ' projects';
+  projects.forEach((p, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<button class="index-row" data-cursor="img"><span class="t"></span><span class="ty"></span><span class="m"></span><span class="y"></span></button>';
+    const b = li.firstChild;
+    b.querySelector('.t').textContent = p.title;
+    b.querySelector('.ty').textContent = p.type;
+    b.querySelector('.m').textContent = p.materials;
+    b.querySelector('.y').textContent = p.year;
+    b.dataset.project = i;
+    b.addEventListener('click', () => openProject(i, b));
+    ilist.appendChild(li);
+  });
+
+  /* ---------- Custom cursor ---------- */
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.documentElement.classList.add('has-cursor');
+    const cur = document.getElementById('cursor'), cfill = document.getElementById('cursor-fill');
+    const pos = { x: innerWidth / 2, y: innerHeight / 2 }, at = { x: pos.x, y: pos.y };
+    let shown = -1;
+    addEventListener('pointermove', e => { pos.x = e.clientX; pos.y = e.clientY; });
+    addEventListener('pointerdown', () => cur.classList.add('down'));
+    addEventListener('pointerup', () => cur.classList.remove('down'));
+    document.addEventListener('pointerleave', () => cur.style.opacity = 0);
+    document.addEventListener('pointerenter', () => cur.style.opacity = 1);
+    document.addEventListener('pointerover', e => {
+      const t = e.target.closest('[data-cursor], a, button');
+      const mode = t ? (t.dataset.cursor || 'link') : '';
+      cur.classList.remove('link', 'view', 'img');
+      if (mode) cur.classList.add(mode);
+      if (mode === 'img' && +t.dataset.project !== shown) {
+        shown = +t.dataset.project;
+        const p = projects[shown];
+        cfill.style.backgroundImage = '';
+        paint(cfill, p.image, p.colors);
+      }
+    });
+    (function follow() {
+      const k = reduceMotion ? 1 : .2;
+      at.x += (pos.x - at.x) * k; at.y += (pos.y - at.y) * k;
+      cur.style.transform = 'translate3d(' + at.x + 'px,' + at.y + 'px,0)';
+      requestAnimationFrame(follow);
+    })();
+  }
+
+  /* ---------- Featured open book ---------- */
+  const fi = Math.max(0, projects.findIndex(p => p.featured));
+  const fp = projects[fi];
+  paint(document.getElementById('feat-l'), fp.image, fp.colors);
+  paint(document.getElementById('feat-r'), fp.image, fp.colors);
+  document.getElementById('feat-title').textContent = fp.title;
+  document.getElementById('feat-desc').textContent = fp.description;
+  document.getElementById('feat-open').addEventListener('click', e => openProject(fi, e.currentTarget));
+  const fbook = document.getElementById('feature-book');
+  if (reduceMotion) fbook.classList.add('open');
+  else new IntersectionObserver(([e], o) => {
+    if (e.isIntersecting) { fbook.classList.add('open'); o.disconnect(); }
+  }, { threshold: .45 }).observe(fbook);
+
+  /* ---------- Project pop-up ---------- */
+  const popup = document.getElementById('popup'), pbook = document.getElementById('pop-book');
+  const closeBtn = document.getElementById('pop-close');
+  let lastFocus = null;
+  function openProject(i, from) {
+    const p = projects[i];
+    lastFocus = from;
+    paint(document.getElementById('pop-art'), p.image, p.colors);
+    document.getElementById('pop-title').textContent = p.title;
+    document.getElementById('pop-desc').textContent = p.description;
+    const facts = document.getElementById('pop-facts');
+    facts.innerHTML = '';
+    [['Type', p.type], ['Year', p.year], ['Materials', p.materials]].forEach(([k, v]) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      facts.append(dt, dd);
+    });
+    pbook.classList.remove('open');
+    popup.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => requestAnimationFrame(() => pbook.classList.add('open')));
+    closeBtn.focus();
+  }
+  function closeProject() {
+    pbook.classList.remove('open');
+    popup.classList.remove('show');
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  closeBtn.addEventListener('click', closeProject);
+  popup.addEventListener('click', e => { if (e.target === popup) closeProject(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && popup.classList.contains('show')) closeProject(); });
+</script>
 </body>
 </html>
